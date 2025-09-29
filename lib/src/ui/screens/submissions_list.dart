@@ -1,6 +1,18 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
+import 'dart:io';
 import '../../models/submission.dart';
+
+class SubmissionsList extends StatelessWidget {
+  const SubmissionsList({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Submissions')),
+      body: const Center(child: Text('No submissions yet')),
+    );
+  }
+}
 
 class SubmissionsListScreen extends StatelessWidget {
   final List<Submission> submissions;
@@ -10,13 +22,9 @@ class SubmissionsListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Your Submissions"),
-      ),
+      appBar: AppBar(title: const Text("Your Submissions")),
       body: submissions.isEmpty
-          ? const Center(
-              child: Text("No submissions yet."),
-            )
+          ? const Center(child: Text("No submissions yet."))
           : ListView.builder(
               itemCount: submissions.length,
               itemBuilder: (context, index) {

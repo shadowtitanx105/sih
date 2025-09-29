@@ -1,26 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'src/ui/screens/login_screen.dart';
+import 'src/ui/screens/main_screen.dart';
 import 'src/ui/screens/capture_screen.dart';
-import 'src/ui/screens/submissions_list.dart';
+import 'src/ui/screens/officer_screen.dart';
 
 void main() {
-  runApp(const ProviderScope(child: LoanUtilApp()));
+  runApp(const ProviderScope(child: MyApp()));
 }
 
-class LoanUtilApp extends StatelessWidget {
-  const LoanUtilApp({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Loan Utilization App',
+      title: 'Loan Utility App',
       theme: ThemeData(primarySwatch: Colors.blue),
-      initialRoute: '/',
+      initialRoute: '/login',
       routes: {
-        '/': (context) => const LoginScreen(),
+        '/login': (context) => const LoginScreen(),
+        '/main': (context) => const MainScreen(),
         '/capture': (context) => const CaptureScreen(),
-        '/submissions': (context) => SubmissionsListScreen(submissions: []), // Pass empty list initially
+        '/officer': (context) => const OfficerScreen(),
       },
     );
   }

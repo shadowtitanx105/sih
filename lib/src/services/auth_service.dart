@@ -1,69 +1,31 @@
-// lib/src/services/auth_service.dart
-import 'dart:async';
-import 'package:flutter/foundation.dart';
+import 'dart:developer' as developer;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/// Simple AuthService for development/testing that fakes OTP sending/verification.
-///
-/// - `requestOtp` simulates sending an OTP (no real SMS is sent).
-/// - `verifyOtp` returns true only when the provided OTP matches [_testOtp].
-///
-/// Toggle [kBypassOtp] to accept any OTP (handy when you don't want to type the test code).
-///
-/// WARNING: This file contains a deliberate insecure bypass. Remove or replace it
-/// before building/testing with real users or releasing the app.
-const bool kBypassOtp = false; // set true to accept any OTP (DEV ONLY)
-const String _testOtp =
-    '123456'; // OTP to enter on the emulator/device for tests
+final authServiceProvider = Provider<AuthService>((ref) => AuthService());
 
-abstract class IAuthService {
-  /// Simulate requesting an OTP for [phone].
-  Future<void> requestOtp(String phone);
+enum UserRole { beneficiary, officer }
 
-  /// Simulate verifying an OTP.
-  /// Returns `true` when verification succeeds.
-  Future<bool> verifyOtp(String phone, String otp);
-}
+class AuthService {
+  final Map<String, String> _otpStore = {};
 
-class AuthService implements IAuthService {
-  AuthService();
-
-  /// Simulate network latency
-  Future<void> _fakeNetworkDelay() async {
-    await Future.delayed(const Duration(milliseconds: 600));
+  /// Requests an OTP for a given phone and role
+  Future<void> requestOtp(String phone, UserRole role) async {
+    // Hardcoded OTP for testing purposes
+    const otp = '123456';
+    _otpStore[phone] = otp;
+    developer.log("Sending hardcoded OTP $otp to $phone for role $role");
+    await Future.delayed(const Duration(seconds: 1));
   }
 
-  /// Simulate sending the OTP. In a real app this should call an SMS API.
-  @override
-  Future<void> requestOtp(String phone) async {
-    await _fakeNetworkDelay();
-
-    // In a real implementation you'd call your backend here.
-    // We print the test OTP to the console to make testing easy.
-    if (kDebugMode) {
-      // Prints to the debug console so you can copy/paste during development.
-      // On a physical device, check the logs (flutter run) to see this.
-      // Do NOT rely on this in production.
-      debugPrint('*** [DEV] Mock OTP for $phone: $_testOtp ***');
-    }
-  }
-
-  /// Simulate verifying the OTP.
-  ///
-  /// - If [kBypassOtp] is true, any OTP is accepted (dev-only).
-  /// - Otherwise only [_testOtp] is accepted.
-  @override
+  /// Verifies OTP for a given phone
   Future<bool> verifyOtp(String phone, String otp) async {
-    await _fakeNetworkDelay();
-
-    if (kBypassOtp) return true;
-    return otp == _testOtp;
+    await Future.delayed(const Duration(seconds: 1));
+    final success = _otpStore[phone] == otp;
+    if (success) {
+      developer.log("Login successful for $phone");
+    } else {
+      developer.log("Login failed for $phone");
+    }
+    return success;
   }
 }
-
-/// Riverpod provider for AuthService.
-///
-/// Replace/override this provider in tests or production with a real implementation.
-final authServiceProvider = Provider<IAuthService>((ref) {
-  return AuthService();
-});

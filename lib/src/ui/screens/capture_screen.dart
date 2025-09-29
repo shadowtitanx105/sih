@@ -50,8 +50,9 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
                         .takePicture();
 
                     final pos = await LocationService().getCurrentLocation();
+                    if (!mounted) return;
+
                     if (pos == null) {
-                      if (!mounted) return; // ✅ moved up
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text("Failed to get location")),
                       );
@@ -60,14 +61,13 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
 
                     final submission = Submission(
                       localPath: filePath,
-                      lat: pos.latitude,
-                      lng: pos.longitude,
-
+                      lat: pos.latitude ?? 0.0,
+                      lng: pos.longitude ?? 0.0,
                       timestamp: DateTime.now(),
                     );
                     await db.insertSubmission(submission);
 
-                    if (!mounted) return; // ✅ moved up
+                    if (!mounted) return;
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text("Submission saved locally")),
                     );
